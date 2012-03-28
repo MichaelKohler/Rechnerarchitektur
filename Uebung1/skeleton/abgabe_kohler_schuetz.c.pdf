@@ -1,0 +1,1089 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 18 36 594 756
+%%Title: Enscript Output
+%%Creator: GNU Enscript 1.6.5.90
+%%CreationDate: Tue Mar 13 22:04:24 2012
+%%Orientation: Landscape
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6.5 90
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6.5 90
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 7 7 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-enscript 1.6.5 90
+%%IncludeResource: font Times-Bold
+%%IncludeResource: font Times-Roman
+
+% Fonts.
+/Times-Bold /HeaderFont-Bold MF
+/HeaderDateF /HeaderFont-Bold findfont 12 scalefont def
+
+/Times-Roman /HeaderFont-Times MF
+/HeaderHDRF /HeaderFont-Times findfont 14 scalefont def
+
+/HeaderPageNumF /Helvetica-Bold findfont 28.8 scalefont def
+
+/do_header {	% print enscript header
+  gsave
+    d_header_x d_header_y translate
+
+    % light bar
+    0 0 d_header_w d_header_h 2 div Box
+    .95 setgray fill
+
+    % dark gray boxes
+    /dbw d_header_h 2 mul def	% dark box width
+    /dbc .7 def			% dark box color
+
+    % left dark box.
+    0 0 dbw d_header_h Box
+    dbc setgray fill
+
+    0 setgray 
+    HeaderDateF setfont
+    moddatestr dup stringwidth pop dbw exch sub 2 div 
+    d_header_h 2 div 2 add moveto show
+    modtimestr dup stringwidth pop dbw exch sub 2 div 
+    d_header_h 5 div moveto show
+
+    % right dark box
+    d_header_w dbw sub 0 dbw d_header_h Box
+    dbc setgray fill
+
+    HeaderPageNumF setfont
+    1 setgray
+    pagenumstr dup
+    stringwidth pop dbw exch sub 2 div d_header_w dbw sub add
+    d_header_h .2 mul moveto show
+
+    % filename
+    0 setgray 
+    HeaderHDRF setfont
+    d_header_w fname stringwidth pop sub 2 div d_header_h 8 div moveto
+    fname show
+
+    % user supplied header string.
+    user_header_p {
+      /h d_header_h 8 div 5 mul def
+
+      % Implement strict enscript compatibility.
+      user_header_center_str () eq user_header_right_str () eq and {
+        d_header_w user_header_left_str stringwidth pop sub 2 div 
+        h moveto user_header_left_str show
+      } {
+        dbw 5 add h moveto user_header_left_str show
+
+        d_header_w user_header_center_str stringwidth pop sub 2 div 
+        h moveto user_header_center_str show
+
+	d_header_w dbw sub 5 sub user_header_right_str stringwidth pop
+	sub h moveto user_header_right_str show
+      } ifelse
+    } if
+
+  grestore
+} def
+%%EndResource
+/d_page_w 720 def
+/d_page_h 576 def
+/d_header_x 0 def
+/d_header_y 540 def
+/d_header_w 720 def
+/d_header_h 36 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 720 def
+/d_footer_h 0 def
+/d_output_w 720 def
+/d_output_h 540 def
+/cols 2 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 1 def
+/fname (kohler_schuetz.c) def
+/fdir (.) def
+/ftail (kohler_schuetz.c) def
+% User defined strings:
+/pagenumstr (1) def
+/moddatestr (03/13/12) def
+/modtimestr (22:01:01) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+column_lines
+do_header
+5 530 M
+(/*) s
+5 522 M
+( *) s
+5 514 M
+( * author\(s\):   Michael Kohler ) s
+5 506 M
+( *              Lars Sch\303\274tz) s
+5 498 M
+( *) s
+5 490 M
+( * Please follow the instructions given in comments below. ) s
+5 482 M
+( * The file outputc1 shows what the output of this program ) s
+5 474 M
+( * should look like. ) s
+5 466 M
+( *) s
+5 458 M
+( */) s
+5 442 M
+(#include <stdlib.h>) s
+5 434 M
+(#include <stdio.h>) s
+5 426 M
+(#include <string.h>) s
+5 410 M
+(/* Define abbreviations for the indices of the registers */) s
+5 402 M
+(#define I_ZERO 0) s
+5 394 M
+(#define I_AT 1) s
+5 386 M
+(#define I_V0 2) s
+5 378 M
+(#define I_V1 3) s
+5 370 M
+(#define I_A0 4) s
+5 362 M
+(#define I_A1 5) s
+5 354 M
+(#define I_A2 6) s
+5 346 M
+(#define I_A3 7) s
+5 338 M
+(#define I_T0 8) s
+5 330 M
+(#define I_T1 9) s
+5 322 M
+(#define I_T2 10) s
+5 314 M
+(#define I_T3 11) s
+5 306 M
+(#define I_T4 12) s
+5 298 M
+(#define I_T5 13) s
+5 290 M
+(#define I_T6 14) s
+5 282 M
+(#define I_T7 15) s
+5 274 M
+(#define I_S0 16) s
+5 266 M
+(#define I_S1 17) s
+5 258 M
+(#define I_S2 18) s
+5 250 M
+(#define I_S3 19) s
+5 242 M
+(#define I_S4 20) s
+5 234 M
+(#define I_S5 21) s
+5 226 M
+(#define I_S6 22) s
+5 218 M
+(#define I_S7 23) s
+5 210 M
+(#define I_T8 24) s
+5 202 M
+(#define I_T9 25) s
+5 194 M
+(#define I_K0 26) s
+5 186 M
+(#define I_K1 27) s
+5 178 M
+(#define I_GP 28) s
+5 170 M
+(#define I_SP 29) s
+5 162 M
+(#define I_FP 30) s
+5 154 M
+(#define I_RA 31) s
+5 138 M
+(/* Define abbreviations for the operation codes \(OC\) and function codes \(FC\) */) s
+5 130 M
+(#define OC_ADD          0x00) s
+5 122 M
+(#define FC_ADD          0x20) s
+5 114 M
+(#define OC_ADDI         0x08) s
+5 106 M
+(#define OC_ADDIU        0x09) s
+5 98 M
+(#define OC_ADDU         0x00) s
+5 90 M
+(#define FC_ADDU         0x21) s
+5 82 M
+(#define OC_AND          0x00) s
+5 74 M
+(#define FC_AND          0x24) s
+5 66 M
+(#define OC_ANDI         0x0C) s
+5 58 M
+(#define OC_BEQ          0x04) s
+5 50 M
+(#define OC_BNE          0x05) s
+5 42 M
+(#define OC_DIV          0x00) s
+5 34 M
+(#define FC_DIV          0x1A) s
+5 26 M
+(#define OC_J            0x02) s
+5 18 M
+(#define OC_JAL          0x03) s
+5 10 M
+(#define OC_JR           0x00) s
+5 2 M
+(#define FC_JR           0x08) s
+365 530 M
+(#define OC_LBU          0x00) s
+365 522 M
+(#define FC_LBU          0x24) s
+365 514 M
+(#define OC_LHU          0x00) s
+365 506 M
+(#define FC_LHU          0x25) s
+365 498 M
+(#define OC_LUI          0x0F) s
+365 490 M
+(#define OC_LW           0x23) s
+365 482 M
+(#define OC_MULT         0x00) s
+365 474 M
+(#define FC_MULT         0x18) s
+365 466 M
+(#define OC_NOR          0x00) s
+365 458 M
+(#define FC_NOR          0x27) s
+365 450 M
+(#define OC_OR           0x00) s
+365 442 M
+(#define FC_OR           0x25) s
+365 434 M
+(#define OC_ORI          0x0D) s
+365 426 M
+(#define OC_SLT          0x00) s
+365 418 M
+(#define FC_SLT          0x2A) s
+365 410 M
+(#define OC_SLTI         0x0A) s
+365 402 M
+(#define OC_SLTIU        0x0B) s
+365 394 M
+(#define OC_SLTU         0x00) s
+365 386 M
+(#define FC_SLTU         0x2B) s
+365 378 M
+(#define OC_SLL          0x00) s
+365 370 M
+(#define FC_SLL          0x00) s
+365 362 M
+(#define OC_SRL          0x00) s
+365 354 M
+(#define FC_SRL          0x02) s
+365 346 M
+(#define OC_SB           0x28) s
+365 338 M
+(#define OC_SH           0x29) s
+365 330 M
+(#define OC_SW           0x2B) s
+365 322 M
+(#define OC_SUB          0x00) s
+365 314 M
+(#define FC_SUB          0x22) s
+365 306 M
+(#define OC_SUBU         0x00) s
+365 298 M
+(#define FC_SUBU         0x23) s
+365 290 M
+(/* Just a handy abbreviation */) s
+365 282 M
+(#define OC_ZERO 0x00) s
+365 274 M
+(/* Stop Operation --- not actual MIPS */) s
+365 266 M
+(#define OC_STOP 0x3F) s
+365 250 M
+(/* Number of operations, functions and registers */) s
+365 242 M
+(#define OPERATION_COUNT 64) s
+365 234 M
+(#define FUNCTION_COUNT 64) s
+365 226 M
+(#define REGISTER_COUNT 32) s
+365 210 M
+(/* Maximal length of operation and function names */) s
+365 202 M
+(#define OP_NAME_LENGTH 4) s
+365 194 M
+(#define FUNC_NAME_LENGTH 4) s
+365 178 M
+(/* Define some types */) s
+365 170 M
+(typedef unsigned long word;) s
+365 162 M
+(typedef unsigned short halfword;) s
+365 154 M
+(typedef unsigned char byte;) s
+365 138 M
+(/* TODO Task \(c\) add bitfields InstructionTypeI, InstructionTypeJ and InstructionTy) s
+365 130 M
+(peR here */) s
+365 122 M
+(typedef struct) s
+365 114 M
+({) s
+365 106 M
+(    unsigned immediate : 16;) s
+365 98 M
+(    unsigned rt        :  5;) s
+365 90 M
+(    unsigned rs        :  5;) s
+365 82 M
+(    unsigned opcode    :  6;         ) s
+365 74 M
+(} InstructionTypeI;) s
+365 58 M
+(typedef struct) s
+365 50 M
+({) s
+365 42 M
+(    unsigned address : 26;) s
+365 34 M
+(    unsigned opcode  :  6;) s
+365 26 M
+(} InstructionTypeJ;) s
+365 10 M
+(typedef struct) s
+365 2 M
+({) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 2 def
+/fname (kohler_schuetz.c) def
+/fdir (.) def
+/ftail (kohler_schuetz.c) def
+% User defined strings:
+/pagenumstr (2) def
+/moddatestr (03/13/12) def
+/modtimestr (22:01:01) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+column_lines
+do_header
+5 530 M
+(    unsigned funct   :  6;) s
+5 522 M
+(    unsigned shamt   :  5;) s
+5 514 M
+(    unsigned rd      :  5;) s
+5 506 M
+(    unsigned rt      :  5;) s
+5 498 M
+(    unsigned rs      :  5;) s
+5 490 M
+(    unsigned opcode  :  6;                                   ) s
+5 482 M
+(} InstructionTypeR;) s
+5 466 M
+(/* TODO Task \(d\) add union Instruction here */) s
+5 458 M
+(typedef union) s
+5 450 M
+({) s
+5 442 M
+(    InstructionTypeI i;) s
+5 434 M
+(    InstructionTypeJ j;) s
+5 426 M
+(    InstructionTypeR r;) s
+5 418 M
+(} Instruction;) s
+5 402 M
+(/* TODO Task \(e\) add enumeration InstructionType here */) s
+5 394 M
+(typedef enum) s
+5 386 M
+({) s
+5 378 M
+(    iType,) s
+5 370 M
+(    jType,) s
+5 362 M
+(    rType,) s
+5 354 M
+(    specialType) s
+5 346 M
+(} InstructionType;) s
+5 330 M
+(/* TODO Task \(f\) add structure Operation here */) s
+5 322 M
+(typedef struct) s
+5 314 M
+({) s
+5 306 M
+(    char name[OP_NAME_LENGTH+1];) s
+5 298 M
+(    InstructionType type;) s
+5 290 M
+(    void \(*operation\)\(Instruction *instruction\);) s
+5 282 M
+(} Operation;) s
+5 266 M
+(/* TODO Task \(g\) add structure Function here */) s
+5 258 M
+(typedef struct) s
+5 250 M
+({) s
+5 242 M
+(    char name[OP_NAME_LENGTH+1];) s
+5 234 M
+(    InstructionType type;) s
+5 226 M
+(    void \(*function\)\(Instruction *instruction\);) s
+5 218 M
+(} Function;) s
+5 202 M
+(/* Operation and function dispatcher */) s
+5 194 M
+(Operation operations[OPERATION_COUNT];) s
+5 186 M
+(Function functions[FUNCTION_COUNT];) s
+5 170 M
+(/* Assembles the given parts of an I-type instruction into a single word*/) s
+5 162 M
+(word create_itype_hex\(unsigned short immediate, unsigned short rt, unsigned short r) s
+5 154 M
+(s, unsigned short opcode\) {) s
+5 146 M
+(    return immediate + \(rt << 16\)+ \(rs <<21\) + \(opcode << 26\);) s
+5 138 M
+(}) s
+5 122 M
+(/* Assembles the given parts of an J-type instruction into a single word*/) s
+5 114 M
+(word create_jtype_hex\(unsigned long address, unsigned short opcode\) {) s
+5 106 M
+(    return address + \(opcode << 26\);) s
+5 98 M
+(}) s
+5 82 M
+(/* Assembles the given parts of an R-type instruction into a single word*/) s
+5 74 M
+(word create_rtype_hex\(unsigned short funct, unsigned short shamt, unsigned short rd) s
+5 66 M
+(, unsigned short rt, unsigned short rs, unsigned short opcode\) {) s
+5 58 M
+(    return funct + \(shamt << 6\) + \(rd << 11\) + \(rt << 16\) + \(rs <<21\) + \(opcode << ) s
+5 50 M
+(26\);) s
+5 42 M
+(}) s
+5 26 M
+(/* Assembles the given parts of an special-type instruction into a single word*/) s
+5 18 M
+(word create_specialtype_hex\(unsigned short opcode\) {) s
+5 10 M
+(    return create_jtype_hex\(0x0000, opcode\);) s
+5 2 M
+(}) s
+365 522 M
+(/* Copies operation into the operation dispatcher */) s
+365 514 M
+(void assignOperation\(unsigned short opCode, const char name[OP_NAME_LENGTH+1], Inst) s
+365 506 M
+(ructionType type, void \(*operation\)\(Instruction*\)\) {) s
+365 498 M
+(    strcpy\(operations[opCode].name, name\);) s
+365 490 M
+(    operations[opCode].type=type;) s
+365 482 M
+(    operations[opCode].operation = operation;) s
+365 474 M
+(}) s
+365 458 M
+(/* Copies functions into the function dispatcher */) s
+365 450 M
+(void assignFunction\(unsigned short funct, const char name[FUNC_NAME_LENGTH+1], void) s
+365 442 M
+( \(*function\)\(Instruction*\)\) {) s
+365 434 M
+(    strcpy\(functions[funct].name, name\);) s
+365 426 M
+(    functions[funct].function = function;) s
+365 418 M
+(}) s
+365 402 M
+(/* Initialize the "hardware" and operation and function dispatcher */) s
+365 394 M
+(void initialize\(\) {) s
+365 386 M
+(    int i;) s
+365 378 M
+(    /* Initialize operations  with default values */) s
+365 370 M
+(    for \(i=0; i<OPERATION_COUNT; ++i\) {) s
+365 362 M
+(        assignOperation\(i, "ndef", specialType, 0\);) s
+365 354 M
+(    }) s
+365 338 M
+(    /* to deal with operations with OpCode = 0, i.e. R-Type */) s
+365 330 M
+(    assignOperation\(OC_ZERO, "zero", rType, 0\);) s
+365 314 M
+(    /* assign some actual operations */) s
+365 306 M
+(    assignOperation\(OC_ADDI, "addi", iType, 0\);) s
+365 298 M
+(    assignOperation\(OC_J, "j", jType, 0\);) s
+365 290 M
+(    assignOperation\(OC_LUI, "lui", iType, 0\);) s
+365 282 M
+(    assignOperation\(OC_LW, "lw", iType, 0\);) s
+365 274 M
+(    assignOperation\(OC_ORI, "ori", iType, 0\);) s
+365 266 M
+(    assignOperation\(OC_SW, "sw", iType, 0\);) s
+365 258 M
+(    assignOperation\(OC_STOP,"stop", specialType, 0\);) s
+365 242 M
+(    /* Initialize operations with OpCode = 0 and corresponding functions with defau) s
+365 234 M
+(lt values*/) s
+365 226 M
+(    for \(i=0; i<FUNCTION_COUNT; ++i\) {) s
+365 218 M
+(        assignFunction\(i, "ndef", 0\);) s
+365 210 M
+(    }) s
+365 194 M
+(    /* assign some actual functions */) s
+365 186 M
+(    assignFunction\(FC_ADD, "add", 0\);) s
+365 178 M
+(    assignFunction\(FC_SUB, "sub", 0\);) s
+365 170 M
+(}) s
+365 146 M
+(void printInstruction\(Instruction *i\) {) s
+365 138 M
+(/* TODO Task \(h\) complete printInstruction here */    ) s
+365 130 M
+(    Operation operation = operations[i->i.opcode];) s
+365 122 M
+(    Function function = functions[i->r.funct];) s
+365 106 M
+(    switch \(operation.type\) {) s
+365 98 M
+(        case iType:) s
+365 90 M
+(            printf\("%-4s %02i, %02i, 0x%04x\\n", operation.name, i->i.rt, i->i.rs, i) s
+365 82 M
+(->i.immediate\);) s
+365 74 M
+(            break;) s
+365 66 M
+(                                            ) s
+365 58 M
+(        case jType:) s
+365 50 M
+(            printf\("%-4s 0x%08x\\n", operation.name, i->j.address\);) s
+365 42 M
+(            break;) s
+365 34 M
+(        ) s
+365 26 M
+(        case rType:) s
+365 18 M
+(            printf\("%-4s %02i, %02i, %02i, 0x%04x\\n", function.name, i->r.rd, i->r.) s
+365 10 M
+(rs, i->r.rt, i->r.shamt\);) s
+365 2 M
+(            break;) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 3 def
+/fname (kohler_schuetz.c) def
+/fdir (.) def
+/ftail (kohler_schuetz.c) def
+% User defined strings:
+/pagenumstr (3) def
+/moddatestr (03/13/12) def
+/modtimestr (22:01:01) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+column_lines
+do_header
+5 530 M
+(        ) s
+5 522 M
+(        case specialType:) s
+5 514 M
+(            printf\("%-4s\\n", operation.name\);) s
+5 506 M
+(            break;) s
+5 498 M
+(    }) s
+5 490 M
+(}) s
+5 474 M
+(void testPrint\(word w\) {) s
+5 466 M
+(    Instruction * instruction = \(Instruction *\) &w;) s
+5 458 M
+(    printInstruction\(instruction\);) s
+5 450 M
+(}) s
+5 434 M
+(int main\(int argc, const char * argv[]\) {) s
+5 426 M
+(    initialize\(\);) s
+5 418 M
+(    testPrint\(create_rtype_hex\(FC_ADD, 0x0000, I_T0, I_T1, I_T2, OC_ADD\)\);) s
+5 410 M
+(    testPrint\(create_itype_hex\(0x0001, I_T0, I_ZERO, OC_ADDI\)\);) s
+5 402 M
+(    testPrint\(create_jtype_hex\(0xCD1234, OC_J\)\);) s
+5 394 M
+(    testPrint\(create_itype_hex\(0xBBBB, I_T0, I_ZERO, OC_LUI\)\);) s
+5 386 M
+(    testPrint\(create_itype_hex\(0xA03B, I_T0, I_T1, OC_LW\)\);) s
+5 378 M
+(    testPrint\(create_itype_hex\(0x0101, I_T0, I_T0, OC_ORI\)\);) s
+5 370 M
+(    testPrint\(create_rtype_hex\(FC_SUB, 0x0002, I_T0, I_T1, I_T2, OC_SUB\)\);) s
+5 362 M
+(    testPrint\(create_itype_hex\(0xD070, I_T0, I_T1, OC_SW\)\);) s
+5 354 M
+(    testPrint\(create_specialtype_hex\(OC_STOP\)\);) s
+5 346 M
+(    return 0;) s
+5 338 M
+(}) s
+_R
+S
+%%Trailer
+%%Pages: 3
+%%DocumentNeededResources: font Times-Roman Courier-Bold Courier 
+%%+ font Times-Bold 
+%%EOF

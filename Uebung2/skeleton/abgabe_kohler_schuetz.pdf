@@ -1,0 +1,1393 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 18 36 594 756
+%%Title: Enscript Output
+%%Creator: GNU Enscript 1.6.5.90
+%%CreationDate: Wed Mar 28 22:49:30 2012
+%%Orientation: Landscape
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6.5 90
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6.5 90
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 7 7 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-enscript 1.6.5 90
+%%IncludeResource: font Times-Bold
+%%IncludeResource: font Times-Roman
+
+% Fonts.
+/Times-Bold /HeaderFont-Bold MF
+/HeaderDateF /HeaderFont-Bold findfont 12 scalefont def
+
+/Times-Roman /HeaderFont-Times MF
+/HeaderHDRF /HeaderFont-Times findfont 14 scalefont def
+
+/HeaderPageNumF /Helvetica-Bold findfont 28.8 scalefont def
+
+/do_header {	% print enscript header
+  gsave
+    d_header_x d_header_y translate
+
+    % light bar
+    0 0 d_header_w d_header_h 2 div Box
+    .95 setgray fill
+
+    % dark gray boxes
+    /dbw d_header_h 2 mul def	% dark box width
+    /dbc .7 def			% dark box color
+
+    % left dark box.
+    0 0 dbw d_header_h Box
+    dbc setgray fill
+
+    0 setgray 
+    HeaderDateF setfont
+    moddatestr dup stringwidth pop dbw exch sub 2 div 
+    d_header_h 2 div 2 add moveto show
+    modtimestr dup stringwidth pop dbw exch sub 2 div 
+    d_header_h 5 div moveto show
+
+    % right dark box
+    d_header_w dbw sub 0 dbw d_header_h Box
+    dbc setgray fill
+
+    HeaderPageNumF setfont
+    1 setgray
+    pagenumstr dup
+    stringwidth pop dbw exch sub 2 div d_header_w dbw sub add
+    d_header_h .2 mul moveto show
+
+    % filename
+    0 setgray 
+    HeaderHDRF setfont
+    d_header_w fname stringwidth pop sub 2 div d_header_h 8 div moveto
+    fname show
+
+    % user supplied header string.
+    user_header_p {
+      /h d_header_h 8 div 5 mul def
+
+      % Implement strict enscript compatibility.
+      user_header_center_str () eq user_header_right_str () eq and {
+        d_header_w user_header_left_str stringwidth pop sub 2 div 
+        h moveto user_header_left_str show
+      } {
+        dbw 5 add h moveto user_header_left_str show
+
+        d_header_w user_header_center_str stringwidth pop sub 2 div 
+        h moveto user_header_center_str show
+
+	d_header_w dbw sub 5 sub user_header_right_str stringwidth pop
+	sub h moveto user_header_right_str show
+      } ifelse
+    } if
+
+  grestore
+} def
+%%EndResource
+/d_page_w 720 def
+/d_page_h 576 def
+/d_header_x 0 def
+/d_header_y 540 def
+/d_header_w 720 def
+/d_header_h 36 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 720 def
+/d_footer_h 0 def
+/d_output_w 720 def
+/d_output_h 540 def
+/cols 2 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 1 def
+/fname (mips.c) def
+/fdir (.) def
+/ftail (mips.c) def
+% User defined strings:
+/pagenumstr (1) def
+/moddatestr (03/28/12) def
+/modtimestr (20:22:51) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+column_lines
+do_header
+5 530 M
+(/*) s
+5 522 M
+( * author\(s\):   Michael Kohler - 11-108-289 ) s
+5 514 M
+( *              Lars Sch\303\274tz - 11-122-348) s
+5 506 M
+( * modified:    2011-03-27) s
+5 498 M
+( *) s
+5 490 M
+( */) s
+5 474 M
+(#include <stdlib.h>) s
+5 466 M
+(#include <stdio.h>) s
+5 458 M
+(#include <string.h>) s
+5 450 M
+(#include "mips.h") s
+5 434 M
+(/* The "Hardware" */) s
+5 426 M
+(byte memory[MEMORY_SIZE];) s
+5 418 M
+(word registers[REGISTER_COUNT];) s
+5 410 M
+(word pc;) s
+5 394 M
+(/* To stop the MIPS machine */) s
+5 386 M
+(int doRun;) s
+5 370 M
+(/* In case you want to watch the machine working */) s
+5 362 M
+(int verbose = FALSE;) s
+5 346 M
+(/* Operation and function dispatcher */) s
+5 338 M
+(Operation operations[OPERATION_COUNT];) s
+5 330 M
+(Function functions[FUNCTION_COUNT];) s
+5 314 M
+(/* ======================================================================= */) s
+5 306 M
+(/* Some useful helpers */) s
+5 290 M
+(/* Assembles the given parts of an I-type instruction into a single word*/) s
+5 282 M
+(word create_itype_hex\(unsigned immediate, unsigned rt, unsigned rs, unsigned opcode) s
+5 274 M
+(\) {) s
+5 266 M
+(        return immediate + \(rt << 16\)+ \(rs <<21\) + \(opcode << 26\);) s
+5 258 M
+(}) s
+5 242 M
+(/* Assembles the given parts of an J-type instruction into a single word*/) s
+5 234 M
+(word create_jtype_hex\(unsigned address, unsigned opcode\) {) s
+5 226 M
+(        return address + \(opcode << 26\);) s
+5 218 M
+(}) s
+5 202 M
+(/* Assembles the given parts of an R-type instruction into a single word*/) s
+5 194 M
+(word create_rtype_hex\(unsigned funct, unsigned shamt, unsigned rd, unsigned rt, uns) s
+5 186 M
+(igned rs, unsigned opcode\) {) s
+5 178 M
+(        return funct + \(shamt << 6\) + \(rd << 11\) + \(rt << 16\) + \(rs <<21\) + \(opcode) s
+5 170 M
+( << 26\);) s
+5 162 M
+(}) s
+5 146 M
+(/* Extends a 16 bit halfword to a 32 bit word with the value of the most significan) s
+5 138 M
+(t bit */) s
+5 130 M
+(word signExtend\(halfword value\) {) s
+5 122 M
+(    return \(value ^ 0x8000\) - 0x8000;) s
+5 114 M
+(}) s
+5 98 M
+(/* Extends a 16 bit halfword to a 32 bit word by adding leading zeros */) s
+5 90 M
+(word zeroExtend\(halfword value\) {) s
+5 82 M
+(    return \(value | 0x00000000\);) s
+5 74 M
+(}) s
+5 58 M
+(/* To make some noise */) s
+5 50 M
+(void printInstruction\(Instruction *i\) {) s
+5 42 M
+(    Operation o = operations[i->i.opcode];) s
+5 34 M
+(    Function f;) s
+5 26 M
+(    switch \(o.type\) {) s
+5 18 M
+(        case iType: ) s
+5 10 M
+(            printf\("%-4s %02i=0x%08ux, %02i=0x%08ux, 0x%04x\\n", o.name, i->i.rt, re) s
+5 2 M
+(gisters[i->i.rt], i->i.rs, registers[i->i.rs], i->i.immediate \); ) s
+365 530 M
+(            break;) s
+365 522 M
+(        case jType:) s
+365 514 M
+(            printf\("%-4s 0x%08x\\n", o.name, i->j.address\); ) s
+365 506 M
+(            break;) s
+365 498 M
+(        case rType:) s
+365 490 M
+(            f = functions[i->r.funct];) s
+365 482 M
+(            printf\("%-4s %02i=0x%08ux, %02i=0x%08ux, %02i=0x%08ux, 0x%04x\\n", f.nam) s
+365 474 M
+(e, i->r.rd, registers[i->r.rd], i->r.rs, registers[i->r.rs],i->r.rt, registers[i->r) s
+365 466 M
+(.rt],i->r.shamt\); ) s
+365 458 M
+(            break;) s
+365 450 M
+(        case specialType: ) s
+365 442 M
+(            printf\("%-4s\\n", o.name\); ) s
+365 434 M
+(            break;) s
+365 426 M
+(    }) s
+365 418 M
+(}) s
+365 402 M
+(/* ======================================================================= */) s
+365 394 M
+(/* Memory operations */) s
+365 378 M
+(/* Store a word to memory */) s
+365 370 M
+(void storeWord\(word w, word location\) { ) s
+365 362 M
+(        memory[location] = \(byte\)\(\(w >> \(8*3\)\) & 0xFF\);) s
+365 354 M
+(        memory[location+1] = \(byte\)\(\(w >> \(8*2\)\) & 0xFF\);) s
+365 346 M
+(        memory[location+2] = \(byte\)\(\(w >> \(8*1\)\) & 0xFF\);) s
+365 338 M
+(        memory[location+3] = \(byte\)\(w & 0xFF\);) s
+365 330 M
+(}) s
+365 314 M
+(/* Load a word from memory */) s
+365 306 M
+(word loadWordFrom\(word location\) {) s
+365 298 M
+(        word w = 0;) s
+365 290 M
+(        w += \(memory[location]   << \(8*3\)\);) s
+365 282 M
+(        w += \(memory[location+1] << \(8*2\)\);) s
+365 274 M
+(        w += \(memory[location+2] << \(8*1\)\);) s
+365 266 M
+(        w +=  memory[location+3];) s
+365 258 M
+(        return w;) s
+365 250 M
+(}) s
+365 234 M
+(/* ======================================================================= */) s
+365 226 M
+(/* Initialize and run */) s
+365 218 M
+(void assignOperation\(unsigned short opCode, const char name[OP_NAME_LENGTH+1], Inst) s
+365 210 M
+(ructionType type, void \(*operation\)\(Instruction*\)\) {) s
+365 202 M
+(    strcpy\(operations[opCode].name, name\);) s
+365 194 M
+(    operations[opCode].type=type;) s
+365 186 M
+(    operations[opCode].operation = operation;) s
+365 178 M
+(}) s
+365 162 M
+(void assignFunction\(unsigned short funct, const char name[FUNC_NAME_LENGTH+1], void) s
+365 154 M
+( \(*function\)\(Instruction*\)\) {) s
+365 146 M
+(    strcpy\(functions[funct].name, name\);) s
+365 138 M
+(    functions[funct].function = function;) s
+365 130 M
+(}) s
+365 114 M
+(/* Initialize the "hardware" and operation and function dispatcher */) s
+365 106 M
+(void initialize\(\) {) s
+365 98 M
+(        int i;) s
+365 90 M
+(        /* Initialize operations */) s
+365 82 M
+(        for \(i=0; i<OPERATION_COUNT; ++i\) {) s
+365 74 M
+(                assignOperation\(i, "ndef", specialType, &undefinedOperation\);) s
+365 66 M
+(        }) s
+365 58 M
+(        assignOperation\(OC_ZERO, "zero", rType, &opCodeZeroOperation\);) s
+365 50 M
+(        /* To stop the MIPS machine */) s
+365 42 M
+(        assignOperation\(OC_STOP,"stop", specialType, &stopOperation\);) s
+365 34 M
+(        ) s
+365 26 M
+(        assignOperation\(OC_ADDI, "addi", iType, &mips_addi\);) s
+365 18 M
+(        assignOperation\(OC_JAL, "jal", jType ,&mips_jal\);) s
+365 10 M
+(        assignOperation\(OC_LUI, "lui", iType ,&mips_lui\);) s
+365 2 M
+(        assignOperation\(OC_LW, "lw", iType, &mips_lw\);) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 2 def
+/fname (mips.c) def
+/fdir (.) def
+/ftail (mips.c) def
+% User defined strings:
+/pagenumstr (2) def
+/moddatestr (03/28/12) def
+/modtimestr (20:22:51) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+column_lines
+do_header
+5 530 M
+(        assignOperation\(OC_ORI, "ori", iType, &mips_ori\);) s
+5 522 M
+(        assignOperation\(OC_SW, "sw", iType, &mips_sw\);) s
+5 514 M
+(        ) s
+5 506 M
+(        /* Initialize operations with OpCode = 0 and corresponding functions */) s
+5 498 M
+(        for \(i=0; i<FUNCTION_COUNT; ++i\) {) s
+5 490 M
+(                assignFunction\(i, "ndef", &undefinedFunction\);) s
+5 482 M
+(        }) s
+5 474 M
+(        assignFunction\(FC_ADD, "add", &mips_add\);) s
+5 466 M
+(        assignFunction\(FC_SUB, "sub", &mips_sub\);) s
+5 458 M
+(        ) s
+5 450 M
+(        /* Initialize memory */) s
+5 442 M
+(        for \(i=0; i<MEMORY_SIZE; ++i\) {) s
+5 434 M
+(                memory[i] = 0;) s
+5 426 M
+(        }) s
+5 418 M
+(    ) s
+5 410 M
+(        /* Initialize registers */) s
+5 402 M
+(        for \(i=0; i<REGISTER_COUNT; ++i\) {) s
+5 394 M
+(                registers[i]= 0;) s
+5 386 M
+(        }) s
+5 378 M
+(        ) s
+5 370 M
+(        /* Stack pointer */) s
+5 362 M
+(        SP=65535;) s
+5 354 M
+(        ) s
+5 346 M
+(        /* Initialize program counter */) s
+5 338 M
+(        pc = 0;) s
+5 330 M
+(        ) s
+5 322 M
+(        /* Yes, we want the machine to run */) s
+5 314 M
+(        doRun = TRUE;           ) s
+5 306 M
+(}) s
+5 290 M
+(/* Fetch and execute */) s
+5 282 M
+(void run\(\) {) s
+5 274 M
+(        while \(doRun\) {) s
+5 266 M
+(                /* Fetch Instruction*/) s
+5 258 M
+(                word w  = loadWordFrom\(pc\);) s
+5 250 M
+(                Instruction *instruction = \(Instruction *\) &w;) s
+5 242 M
+(                /* Please note: the program counter is incremented before the opera) s
+5 234 M
+(tion is executed */) s
+5 226 M
+(                pc += 4;) s
+5 218 M
+(                /* Execute Instruction*/) s
+5 210 M
+(                operations[instruction->i.opcode].operation\(instruction\);) s
+5 202 M
+(                /* In case you want to watch the machine */) s
+5 194 M
+(                if \(verbose\) {) s
+5 186 M
+(                    printInstruction\(instruction\);) s
+5 178 M
+(                }) s
+5 170 M
+(        }) s
+5 162 M
+(}) s
+5 146 M
+(/* ======================================================================= */) s
+5 138 M
+(/* "Special" operations --- only for "internal" usage */) s
+5 122 M
+(/* To deal with "undefined" behaviour */) s
+5 114 M
+(void undefinedOperation\(Instruction *instruction\) {) s
+5 106 M
+(    printf\("%s in %s, line %i: Unknown opcode: %x\\n",__func__, __FILE__, __LINE__, ) s
+5 98 M
+(instruction->i.opcode\);) s
+5 90 M
+(    exit\(0\);) s
+5 82 M
+(}) s
+5 66 M
+(/* To deal with "undefined" behaviour */) s
+5 58 M
+(void undefinedFunction\(Instruction *instruction\) {) s
+5 50 M
+(    printf\("%s in %s, line %i: Unknown funct: %x\\n",__func__, __FILE__, __LINE__, i) s
+5 42 M
+(nstruction->r.funct\);) s
+5 34 M
+(    exit\(0\);) s
+5 26 M
+(}) s
+5 10 M
+(/* To deal with operations with opcode = 0 */) s
+5 2 M
+(void opCodeZeroOperation\(Instruction *instruction\) {) s
+365 530 M
+(        functions[instruction->r.funct].function\(instruction\);) s
+365 522 M
+(}) s
+365 506 M
+(/* To stop the machine */) s
+365 498 M
+(void stopOperation\(Instruction *instruction\) {) s
+365 490 M
+(    doRun = FALSE;) s
+365 482 M
+(}) s
+365 466 M
+(/* ========================================================================== */) s
+365 458 M
+(/* Implemented MIPS operations */) s
+365 442 M
+(/* ADD */) s
+365 434 M
+(void mips_add\(Instruction *instruction\) {) s
+365 426 M
+(        InstructionTypeR instrTypeR = instruction->r;) s
+365 418 M
+(        registers[instrTypeR.rd] = \(signed\)registers[instrTypeR.rs] +) s
+365 410 M
+(                                    \(signed\)registers[instrTypeR.rt];) s
+365 402 M
+(}) s
+365 386 M
+(/* ADDI */) s
+365 378 M
+(void mips_addi\(Instruction *instruction\) {) s
+365 370 M
+(        InstructionTypeI instrTypeI = instruction->i;) s
+365 362 M
+(    registers[instrTypeI.rt] = \(signed\)registers[instrTypeI.rs] +) s
+365 354 M
+(                                 \(signed\)signExtend\(instrTypeI.immediate\);) s
+365 346 M
+(}) s
+365 330 M
+(/* JAL */) s
+365 322 M
+(void mips_jal\(Instruction *instruction\) {) s
+365 314 M
+(        InstructionTypeJ instrTypeJ = instruction->j;) s
+365 306 M
+(  word w = pc; ) s
+365 298 M
+(  registers[I_RA] = \(signed\)\(w\);) s
+365 290 M
+(  pc = \(pc & 0xF0000000\) | \(instrTypeJ.address << 2\);) s
+365 282 M
+(}) s
+365 266 M
+(/* LUI */) s
+365 258 M
+(void mips_lui\(Instruction *instruction\) {) s
+365 250 M
+(        InstructionTypeI instrTypeI = instruction->i;) s
+365 242 M
+(  registers[instrTypeI.rt] = \(instrTypeI.immediate << 16\);) s
+365 234 M
+(}) s
+365 218 M
+(/* LW */) s
+365 210 M
+(void mips_lw\(Instruction *instruction\) {) s
+365 202 M
+(        InstructionTypeI i = instruction->i;) s
+365 194 M
+(        registers[i.rt] = loadWordFrom\(registers[i.rs] + \(signed\)signExtend\(i.immed) s
+365 186 M
+(iate\)\);) s
+365 178 M
+(} ) s
+365 162 M
+(/* ORI */) s
+365 154 M
+(void mips_ori\(Instruction *instruction\) {) s
+365 146 M
+(        InstructionTypeI i = instruction->i;) s
+365 138 M
+(        registers[i.rt] = registers[i.rs] | zeroExtend\(i.immediate\);) s
+365 130 M
+(}) s
+365 114 M
+(/* SUB */) s
+365 106 M
+(void mips_sub\(Instruction *instruction\) {) s
+365 98 M
+(        InstructionTypeR r = instruction->r;) s
+365 90 M
+(        registers[r.rd] = \(signed\)registers[r.rs] - \(signed\)registers[r.rt];) s
+365 82 M
+(}) s
+365 66 M
+(/* SW */) s
+365 58 M
+(void mips_sw\(Instruction *instruction\) {) s
+365 50 M
+(        InstructionTypeI instrTypeI = instruction ->i;) s
+365 42 M
+(    storeWord\(registers[instrTypeI.rt], registers[instrTypeI.rs] +) s
+365 34 M
+(                                        \(signed\)signExtend\(instrTypeI.immediate\)\);) s
+365 26 M
+(}) s
+_R
+S
+%%Page: (1) 3
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 1 def
+/fname (test.c) def
+/fdir (.) def
+/ftail (test.c) def
+% User defined strings:
+/pagenumstr (1) def
+/moddatestr (03/28/12) def
+/modtimestr (20:29:19) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+column_lines
+do_header
+5 530 M
+(/*) s
+5 522 M
+( *) s
+5 514 M
+( * author\(s\):   Michael Kohler - 11-108-289 ) s
+5 506 M
+( *              Lars Sch\303\274tz - 11-122-348) s
+5 498 M
+( * modified:    2011-03-27) s
+5 490 M
+( *) s
+5 482 M
+( */) s
+5 466 M
+(#include <stdlib.h>) s
+5 458 M
+(#include <stdio.h>) s
+5 450 M
+(#include <assert.h>) s
+5 442 M
+(#include "mips.h") s
+5 426 M
+(/* executes exactly the given instrution */) s
+5 418 M
+(void test_execute\(word instr\) {) s
+5 410 M
+(        word w;) s
+5 402 M
+(        Instruction *instruction;) s
+5 394 M
+(        ) s
+5 386 M
+(        /* Store the executable word  */) s
+5 378 M
+(        storeWord\(instr, pc\);) s
+5 370 M
+(        ) s
+5 362 M
+(        /* Fetch the next Instruction */) s
+5 354 M
+(        w  = loadWordFrom\(pc\);) s
+5 346 M
+(        instruction = \(Instruction *\) &w;) s
+5 338 M
+(        pc += 4;) s
+5 330 M
+(        ) s
+5 322 M
+(        /* Execute the fetched instruction*/) s
+5 314 M
+(        operations[instruction->i.opcode].operation\(instruction\);) s
+5 306 M
+(        assert\(ZERO == 0\);) s
+5 298 M
+(}) s
+5 282 M
+(/* ADD */) s
+5 274 M
+(void test_add\(\) {) s
+5 266 M
+(        T1=1;) s
+5 258 M
+(        T2=1;) s
+5 250 M
+(        test_execute\(create_rtype_hex\(FC_ADD, 0x0000, I_T0, I_T1, I_T2, OC_ADD\)\);) s
+5 242 M
+(        assert\(T0==2\);) s
+5 234 M
+(        ) s
+5 226 M
+(        T1=1;) s
+5 218 M
+(        T2=-1;) s
+5 210 M
+(        test_execute\(create_rtype_hex\(FC_ADD, 0x0000, I_T0, I_T1, I_T2, OC_ADD\)\);) s
+5 202 M
+(        assert\(T0==0\);) s
+5 194 M
+(        ) s
+5 186 M
+(        T1=-1;) s
+5 178 M
+(        T2=-1;) s
+5 170 M
+(        test_execute\(create_rtype_hex\(FC_ADD, 0x0000, I_T0, I_T1, I_T2, OC_ADD\)\);) s
+5 162 M
+(        assert\(T0==-2\);) s
+5 154 M
+(}) s
+5 138 M
+(/* ADDI */) s
+5 130 M
+(void test_addi\(\) {) s
+5 122 M
+(        test_execute\(create_itype_hex\(0xFFFF, I_T0, I_ZERO, OC_ADDI\)\);) s
+5 114 M
+(        assert\(T0 == -1\); ) s
+5 106 M
+(        test_execute\(create_itype_hex\(1, I_T0, I_T0, OC_ADDI\)\);) s
+5 98 M
+(        assert\(T0 ==  0\);) s
+5 90 M
+(        ) s
+5 82 M
+(        test_execute\(create_itype_hex\(0xFFFF, I_T0, I_ZERO, OC_ADDI\)\);) s
+5 74 M
+(        assert\(T0 == -1\); ) s
+5 66 M
+(        test_execute\(create_itype_hex\(0xFFFF, I_T0, I_T0, OC_ADDI\)\);) s
+5 58 M
+(        assert\(T0 == -2\); ) s
+5 50 M
+(        ) s
+5 42 M
+(        test_execute\(create_itype_hex\(3, I_T0, I_ZERO, OC_ADDI\)\);) s
+5 34 M
+(        assert\(T0 ==  3\);) s
+5 26 M
+(        test_execute\(create_itype_hex\(1, I_T1, I_T0, OC_ADDI\)\);) s
+5 18 M
+(        assert\(T0 ==  3\);) s
+5 10 M
+(        assert\(T1 ==  4\);) s
+5 2 M
+(}) s
+365 522 M
+(/* JAL */) s
+365 514 M
+(void test_jal\(\) {) s
+365 506 M
+(        int pcSaved;) s
+365 498 M
+(        word w;) s
+365 490 M
+(        Instruction* instruction;) s
+365 474 M
+(        pc = 0x00000000;) s
+365 466 M
+(        pcSaved = pc;) s
+365 458 M
+(        test_execute\(create_jtype_hex\(0x0001, OC_JAL\)\);) s
+365 450 M
+(        assert\(RA == pcSaved + 4\);) s
+365 442 M
+(        assert\(pc == 4\);) s
+365 426 M
+(        /* The following test is executed manually as the desired pc is outside the) s
+365 418 M
+( memory,) s
+365 410 M
+(         * i.e. the test needs to bypass actually storing the instruction in the me) s
+365 402 M
+(mory.) s
+365 394 M
+(         */) s
+365 386 M
+(        initialize\(\);) s
+365 378 M
+(        pc = 0xAF000000;) s
+365 370 M
+(        pcSaved = pc;) s
+365 362 M
+(        w = create_jtype_hex\(0x0001, OC_JAL\);) s
+365 354 M
+(        instruction = \(Instruction *\) &w;) s
+365 346 M
+(        pc += 4;) s
+365 338 M
+(        operations[instruction->i.opcode].operation\(instruction\);) s
+365 330 M
+(        assert\(RA == pcSaved + 4\);) s
+365 322 M
+(        assert\(pc == 0xA0000004\);) s
+365 314 M
+(}) s
+365 298 M
+(/* LUI */) s
+365 290 M
+(void test_lui\(\) {) s
+365 282 M
+(    test_execute\(create_itype_hex\(0xFFFF, I_T0, I_ZERO, OC_LUI\)\);) s
+365 274 M
+(    assert\(T0 == 0xFFFF0000\);) s
+365 266 M
+(    ) s
+365 258 M
+(    test_execute\(create_itype_hex\(0x0001, I_T0, I_ZERO, OC_LUI\)\);) s
+365 250 M
+(    assert\(T0 == 0x00010000\);) s
+365 242 M
+(}) s
+365 226 M
+(/* LW */) s
+365 218 M
+(void test_lw\(\) {) s
+365 210 M
+(    word location1 = 0x000000010;) s
+365 202 M
+(    word location2 = 0x000000014;) s
+365 194 M
+(   ) s
+365 186 M
+(    word w = 0xFFF0;) s
+365 178 M
+(    storeWord\(w, location1\);) s
+365 170 M
+(    T1 = location1;) s
+365 162 M
+(    test_execute\(create_itype_hex\(0x0000, I_T0, I_T1, OC_LW\)\);) s
+365 154 M
+(    assert\(T0==w\);) s
+365 146 M
+(    ) s
+365 138 M
+(    w = 0x0010;) s
+365 130 M
+(    T1 = location2;) s
+365 122 M
+(    storeWord\(w, location2\);) s
+365 114 M
+(    test_execute\(create_itype_hex\(0x0000, I_T0, I_T1, OC_LW\)\);) s
+365 106 M
+(    assert\(T0==w\);) s
+365 98 M
+(} ) s
+365 82 M
+(/* ORI */) s
+365 74 M
+(void test_ori\(\) {) s
+365 66 M
+(    test_execute\(create_itype_hex\(0xFFFF, I_T0, I_T1, OC_ORI\)\);) s
+365 58 M
+(    assert\(\(T0 == 0xFFFF\) | \(T0 == T1\)\);) s
+365 50 M
+(    ) s
+365 42 M
+(    test_execute\(create_itype_hex\(0x00FF, I_T0, I_T1, OC_ORI\)\);) s
+365 34 M
+(    assert\(\(T0 == 0xFF\) | \(T0 == T1\)\);) s
+365 26 M
+(}) s
+365 10 M
+(/* SUB */) s
+365 2 M
+(void test_sub\(\) {) s
+_R
+S
+%%Page: (2) 4
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 2 def
+/fname (test.c) def
+/fdir (.) def
+/ftail (test.c) def
+% User defined strings:
+/pagenumstr (2) def
+/moddatestr (03/28/12) def
+/modtimestr (20:29:19) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+column_lines
+do_header
+5 530 M
+(    T1 = 4;) s
+5 522 M
+(    T2 = 5;) s
+5 514 M
+(    test_execute\(create_rtype_hex\(FC_SUB, 0x0000, I_T0, I_T1, I_T2, OC_SUB\)\);) s
+5 506 M
+(    assert\(T0==1\);) s
+5 498 M
+(    ) s
+5 490 M
+(    T1 = 7;) s
+5 482 M
+(    T2 = 3;) s
+5 474 M
+(    test_execute\(create_rtype_hex\(FC_SUB, 0x0000, I_T0, I_T1, I_T2, OC_SUB\)\);) s
+5 466 M
+(    assert\(T0==-4\);) s
+5 458 M
+(    ) s
+5 450 M
+(    T1 = 4;) s
+5 442 M
+(    T2 = -1;) s
+5 434 M
+(    test_execute\(create_rtype_hex\(FC_SUB, 0x0000, I_T0, I_T1, I_T2, OC_SUB\)\);) s
+5 426 M
+(    assert\(T0==-5\);) s
+5 418 M
+(}) s
+5 402 M
+(/* SW */) s
+5 394 M
+(void test_sw\(\) {) s
+5 386 M
+(    word location1 = 0x00001000;) s
+5 378 M
+(    word location2 = 0x00001004;) s
+5 370 M
+(        ) s
+5 362 M
+(    word w = 0xFFFFFFFF;) s
+5 354 M
+(    T0 = w;) s
+5 346 M
+(    T1 = location1;) s
+5 338 M
+(    test_execute\(create_itype_hex\(0x0000, I_T0, I_T1, OC_SW\)\);) s
+5 330 M
+(    assert\(loadWordFrom\(location1\) == w\);) s
+5 322 M
+(        ) s
+5 314 M
+(    w =0x12345678;) s
+5 306 M
+(    T0 = w;) s
+5 298 M
+(    T1 = location2;) s
+5 290 M
+(    test_execute\(create_itype_hex\(0xFFFC, I_T0, I_T1, OC_SW\)\);) s
+5 282 M
+(    assert\(loadWordFrom\(location1\) == w\);) s
+5 274 M
+(}) s
+5 258 M
+(/* ============================================================================ */) s
+5 250 M
+(/* make sure you've got a "fresh" environment for every test */) s
+5 242 M
+(void execute_test\(void \(*test\)\(void\)\) {) s
+5 234 M
+(    initialize\(\);) s
+5 226 M
+(    test\(\);) s
+5 218 M
+(}) s
+5 202 M
+(/* executes all tests */) s
+5 194 M
+(int main \(int argc, const char * argv[]\) {) s
+5 186 M
+(        execute_test\(&test_add\);) s
+5 178 M
+(        execute_test\(&test_addi\);) s
+5 170 M
+(        execute_test\(&test_jal\);) s
+5 162 M
+(        execute_test\(&test_lui\);) s
+5 154 M
+(        execute_test\(&test_lw\);) s
+5 146 M
+(        execute_test\(&test_ori\);) s
+5 138 M
+(        execute_test\(&test_sub\);) s
+5 130 M
+(        execute_test\(&test_sw\);) s
+5 122 M
+(        return 0;) s
+5 114 M
+(}) s
+_R
+S
+%%Trailer
+%%Pages: 4
+%%DocumentNeededResources: font Times-Roman Courier-Bold Courier 
+%%+ font Times-Bold 
+%%EOF
