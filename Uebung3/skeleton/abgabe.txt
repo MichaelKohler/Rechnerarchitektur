@@ -1,0 +1,58 @@
+compile.c:
+
+int main ( int argc, char** argv ) {
+    if (argc == 3) {
+        printf("%s %s\n", "Input: ", argv[1]);
+        verbose = TRUE;
+        printf("%s", "Postfix: ", argv[2]);
+        compiler(argv[1], argv[2]);
+        verbose = FALSE;
+        printf("%s %s\n", "MIPS binary saved to: ", argv[2]);
+    }
+    else {
+        printf("usage: %s expression filename\n", argv[0]);
+    }
+    return EXIT_SUCCESS;
+}
+
+
+
+memory.c:
+
+/* Load a file to memory */
+void loadFile(char* filename) {
+    /* TODO: Task (d) implement loadFile */
+    word location = 0;
+    word w;
+    
+    byte buffer[4];
+    FILE *file;
+    file = fopen(filename, "r");
+    
+    while (!feof(file)) {
+        fread(buffer, 1, 4, file);
+        w = 0;
+        w += buffer[3];
+        w += (buffer[2] << 1*8);
+        w += (buffer[1] << 2*8);
+        w += (buffer[0] << 3*8);
+        storeWord(w, location);
+        location += 4;
+    }
+    fclose(file);
+}
+
+
+
+mips.c:
+
+void error(const char *functionName, const char *fileName, int lineNumber, char *message, ...) {
+   /* TODO: Task (e) implement error */
+   printf("%s in %s, line %i: ", functionName, fileName, lineNumber);
+   va_list args;
+   va_start(args, message);
+   vprintf(message, args);
+   va_end(args);
+   printf("\n");
+   exit(EXIT_FAILURE);
+}

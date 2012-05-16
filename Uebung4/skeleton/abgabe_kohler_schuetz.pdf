@@ -1,0 +1,1054 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 18 36 594 756
+%%Title: Enscript Output
+%%Creator: GNU Enscript 1.6.5.90
+%%CreationDate: Wed May  2 18:50:41 2012
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6.5 90
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6.5 90
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-enscript 1.6.5 90
+%%IncludeResource: font Times-Bold
+%%IncludeResource: font Times-Roman
+
+% Fonts.
+/Times-Bold /HeaderFont-Bold MF
+/HeaderDateF /HeaderFont-Bold findfont 12 scalefont def
+
+/Times-Roman /HeaderFont-Times MF
+/HeaderHDRF /HeaderFont-Times findfont 14 scalefont def
+
+/HeaderPageNumF /Helvetica-Bold findfont 28.8 scalefont def
+
+/do_header {	% print enscript header
+  gsave
+    d_header_x d_header_y translate
+
+    % light bar
+    0 0 d_header_w d_header_h 2 div Box
+    .95 setgray fill
+
+    % dark gray boxes
+    /dbw d_header_h 2 mul def	% dark box width
+    /dbc .7 def			% dark box color
+
+    % left dark box.
+    0 0 dbw d_header_h Box
+    dbc setgray fill
+
+    0 setgray 
+    HeaderDateF setfont
+    moddatestr dup stringwidth pop dbw exch sub 2 div 
+    d_header_h 2 div 2 add moveto show
+    modtimestr dup stringwidth pop dbw exch sub 2 div 
+    d_header_h 5 div moveto show
+
+    % right dark box
+    d_header_w dbw sub 0 dbw d_header_h Box
+    dbc setgray fill
+
+    HeaderPageNumF setfont
+    1 setgray
+    pagenumstr dup
+    stringwidth pop dbw exch sub 2 div d_header_w dbw sub add
+    d_header_h .2 mul moveto show
+
+    % filename
+    0 setgray 
+    HeaderHDRF setfont
+    d_header_w fname stringwidth pop sub 2 div d_header_h 8 div moveto
+    fname show
+
+    % user supplied header string.
+    user_header_p {
+      /h d_header_h 8 div 5 mul def
+
+      % Implement strict enscript compatibility.
+      user_header_center_str () eq user_header_right_str () eq and {
+        d_header_w user_header_left_str stringwidth pop sub 2 div 
+        h moveto user_header_left_str show
+      } {
+        dbw 5 add h moveto user_header_left_str show
+
+        d_header_w user_header_center_str stringwidth pop sub 2 div 
+        h moveto user_header_center_str show
+
+	d_header_w dbw sub 5 sub user_header_right_str stringwidth pop
+	sub h moveto user_header_right_str show
+      } ifelse
+    } if
+
+  grestore
+} def
+%%EndResource
+/d_page_w 576 def
+/d_page_h 720 def
+/d_header_x 0 def
+/d_header_y 684 def
+/d_header_w 576 def
+/d_header_h 36 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 576 def
+/d_footer_h 0 def
+/d_output_w 576 def
+/d_output_h 684 def
+/cols 2 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 1 def
+/fname (knightRider.s) def
+/fdir (.) def
+/ftail (knightRider.s) def
+% User defined strings:
+/pagenumstr (1) def
+/moddatestr (05/02/12) def
+/modtimestr (18:47:55) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+column_lines
+do_header
+5 671 M
+(/* ) s
+5 660 M
+( *) s
+5 649 M
+( * author\(s\):   Michael Kohler - 11-108-289) s
+5 638 M
+( *               Lars Sch\303\274tz) s
+5 627 M
+( * modified:    2012-05-02) s
+5 616 M
+( *) s
+5 605 M
+( */) s
+5 583 M
+(.include "nios_macros.s") s
+5 572 M
+(.include "address_map.s") s
+5 550 M
+(/* definiere einige Konstanten */) s
+5 539 M
+(.equ WANDER_LEFT, 0) s
+5 528 M
+(.equ WANDER_RIGHT, 1) s
+5 517 M
+(.equ NORMAL_SPEED, 0x800    # je gr\303\266sser die ) s
+5 506 M
+(.equ FAST_SPEED, 0x300      # Zahl, desto g\303\266s) s
+5 495 M
+(ser) s
+5 484 M
+(.equ SLOW_SPEED, 0xd00      # das Intervall) s
+5 462 M
+(/*********************************************) s
+5 451 M
+(***********************************) s
+5 440 M
+( * TEXT SECTION) s
+5 429 M
+( */) s
+5 418 M
+(.text) s
+5 396 M
+(/*********************************************) s
+5 385 M
+(***********************************) s
+5 374 M
+( * Entry point.) s
+5 363 M
+( */) s
+5 352 M
+(.global _start) s
+5 341 M
+(_start:) s
+5 330 M
+(        /* set up sp and fp */) s
+5 319 M
+(        movia   sp, 0x007FFFFC                ) s
+5 308 M
+(# stack starts from largest memory address ) s
+5 297 M
+(        mov             fp, sp) s
+5 275 M
+(        /* This program exercises a few featur) s
+5 264 M
+(es of the DE1 basic computer. ) s
+5 253 M
+(         *) s
+5 242 M
+(         * It performs the following: ) s
+5 231 M
+(         *     1. displays a red light wanderi) s
+5 220 M
+(ng from LEDR0 to LEDR9 and back again \(and so ) s
+5 209 M
+(on...\)) s
+5 198 M
+(         *     2. speed of light can be increa) s
+5 187 M
+(sed by KEY3, decreased by KEY1 and initial val) s
+5 176 M
+(ue can be restored by KEY2) s
+5 165 M
+(         */     ) s
+5 154 M
+(                ) s
+5 143 M
+(        /* set up timer interval = 0x0000C350 ) s
+5 132 M
+(steps * 1/\(50 MHz\) = 1 millisecond*/) s
+5 121 M
+(        movia   r15, TIMER_COUNTER_LOW) s
+5 110 M
+(        movui   r16, 0xC350) s
+5 99 M
+(        sthio           r16, 0\(r15\)) s
+5 88 M
+(        ) s
+5 77 M
+(        movia   r15, TIMER_COUNTER_HIGH) s
+5 66 M
+(        movui   r16, 0x0000) s
+5 55 M
+(        sthio           r16, 0\(r15\)) s
+5 44 M
+(        ) s
+5 33 M
+(        /* start interval timer, enable its in) s
+5 22 M
+(terrupts */) s
+5 11 M
+(        movia   r15, TIMER_STOP_START_CONT_ITO) s
+293 671 M
+(        movi            r16, 0b0111           ) s
+293 660 M
+(# START = 1, CONT = 1, ITO = 1 ) s
+293 649 M
+(        sthio           r16, 0\(r15\)) s
+293 638 M
+(        ) s
+293 627 M
+(        /* enable pushbutton interrupts */) s
+293 616 M
+(        movia   r16, PUSHBUTTON_BASE) s
+293 605 M
+(        movi            r15, 0b01110          ) s
+293 594 M
+(# set all 3 interrupt mask bits to 1 \(bit 0 is) s
+293 583 M
+( Nios II Reset\) ) s
+293 572 M
+(        stwio           r15, 8\(r16\)) s
+293 561 M
+(        ) s
+293 550 M
+(        /* enable processor interrupts */) s
+293 539 M
+(        movi            r16, 0b011            ) s
+293 528 M
+(        # enable interrupts for timer and push) s
+293 517 M
+(buttons ) s
+293 506 M
+(        wrctl           ienable, r16) s
+293 495 M
+(        movi            r16, 1) s
+293 484 M
+(        wrctl           status, r16) s
+293 462 M
+(        ) s
+293 451 M
+(        /* Task \(c\) implemented wandering ligh) s
+293 440 M
+(t */) s
+293 429 M
+(    ) s
+293 418 M
+(    PRE:    # erstelle Register f\303\274r die roten) s
+293 407 M
+( LEDs) s
+293 396 M
+(            # r12 zeigt die Zahl) s
+293 385 M
+(            # r13 zeigt die Richtung) s
+293 363 M
+(    movi r12, 0x1 ) s
+293 352 M
+(    movia r13, WANDER_LEFT ) s
+293 341 M
+(    movia r14, RED_LED_BASE) s
+293 330 M
+(    movia r20, SPEED) s
+293 319 M
+(    movia r21, SLOW_SPEED) s
+293 308 M
+(    stw r21, 0\(r20\) ) s
+293 286 M
+(    ) s
+293 275 M
+(    MAIN:) s
+293 264 M
+(    BUTTON_CHECK:   # key_pressed: zeige die g) s
+293 253 M
+(edr\303\274ckten Keys) s
+293 242 M
+(                    # update_check: pr\303\274ft ob ) s
+293 231 M
+(ein Update erforderlich ist) s
+293 209 M
+(    movia r20, KEY_PRESSED ) s
+293 198 M
+(    ldw r20, 0\(r20\)) s
+293 187 M
+(    beq r0, r20, UPDATE_CHECK ) s
+293 176 M
+(    movi r21, KEY1) s
+293 165 M
+(    beq r21, r20, PRESSED_KEY1) s
+293 154 M
+(    movi r21, KEY2) s
+293 143 M
+(    beq r21, r20, PRESSED_KEY2) s
+293 132 M
+(    br PRESSED_KEY3) s
+293 110 M
+(    PRESSED_KEY1:) s
+293 99 M
+(    movia r20, SPEED) s
+293 88 M
+(    movia r21, FAST_SPEED) s
+293 77 M
+(    stw r21, 0\(r20\)) s
+293 66 M
+(    br UPDATE_CHECK) s
+293 44 M
+(    PRESSED_KEY2:) s
+293 33 M
+(    movia r20, SPEED) s
+293 22 M
+(    movia r21, SLOW_SPEED) s
+293 11 M
+(    stw r21, 0\(r20\)) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 2 def
+/fname (knightRider.s) def
+/fdir (.) def
+/ftail (knightRider.s) def
+% User defined strings:
+/pagenumstr (2) def
+/moddatestr (05/02/12) def
+/modtimestr (18:47:55) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+column_lines
+do_header
+5 671 M
+(    br UPDATE_CHECK) s
+5 649 M
+(    PRESSED_KEY3:) s
+5 638 M
+(    movia r20, SPEED) s
+5 627 M
+(    movia r21, SLOW_SPEED) s
+5 616 M
+(    stw r21, 0\(r20\)) s
+5 594 M
+(    UPDATE_CHECK:) s
+5 583 M
+(    movia r21, SPEED) s
+5 572 M
+(    ldw r20, 0\(r21\)) s
+5 561 M
+(    movia r22, TIME) s
+5 550 M
+(    ldw r21, 0\(r22\)) s
+5 539 M
+(    bgt r20, r21, END_MAIN) s
+5 517 M
+(    ) s
+5 506 M
+(    DO_GREEN_BLINKING:) s
+5 495 M
+(    call BLINK_GREEN) s
+5 473 M
+(    DO_RED_WANDERING:) s
+5 462 M
+(    stwio r12, 0\(r14\) ) s
+5 451 M
+(    movia r20, WANDER_RIGHT) s
+5 440 M
+(    beq r13, r20, SHIFT_RIGHT ) s
+5 418 M
+(    SHIFT_LEFT:) s
+5 407 M
+(    slli r12, r12, 0x1) s
+5 396 M
+(    movi r20, 0x1ff) s
+5 385 M
+(    bgtu r12, r20, SET_TO_RIGHT) s
+5 374 M
+(    br RESET_TIMER) s
+5 352 M
+(    SHIFT_RIGHT:) s
+5 341 M
+(    srli r12, r12, 0x1) s
+5 330 M
+(    movi r20, 0x2) s
+5 319 M
+(    blt r12, r20, SET_TO_LEFT) s
+5 308 M
+(    br RESET_TIMER) s
+5 286 M
+(    SET_TO_RIGHT:) s
+5 275 M
+(    movia r13, WANDER_RIGHT) s
+5 264 M
+(    br RESET_TIMER) s
+5 242 M
+(    SET_TO_LEFT:) s
+5 231 M
+(    movia r13, WANDER_LEFT) s
+5 220 M
+(    ) s
+5 209 M
+(    RESET_TIMER:) s
+5 198 M
+(    stw zero, 0\(r22\)) s
+5 176 M
+(    END_MAIN:) s
+5 165 M
+(    br MAIN) s
+5 132 M
+(    # Subroutine f\303\274r gr\303\274n) s
+5 121 M
+(    BLINK_GREEN:) s
+5 110 M
+(    subi sp, sp, 8) s
+5 99 M
+(    stw r21, 0\(sp\)) s
+5 88 M
+(    stw r22, 4\(sp\)) s
+5 66 M
+(    # setze gr\303\274ne LEDs und speichere in r21) s
+5 55 M
+(    movia r22, GREEN_LED_BASE) s
+5 44 M
+(    ldwio r21, 0\(r22\) ) s
+5 33 M
+(    bgt r21, zero, OFF) s
+5 11 M
+(    ON:) s
+293 671 M
+(    movi r21, 0xff) s
+293 660 M
+(    stwio r21, 0\(r22\)) s
+293 649 M
+(    br END_BLINK_GREEN) s
+293 627 M
+(    OFF:) s
+293 616 M
+(    stwio zero, 0\(r22\)) s
+293 594 M
+(    END_BLINK_GREEN:    ) s
+293 583 M
+(    ldw r21, 0\(sp\)) s
+293 572 M
+(    ldw r22, 4\(sp\)) s
+293 561 M
+(    addi sp, sp, 8) s
+293 550 M
+(    ret) s
+293 539 M
+(        ) s
+293 528 M
+(        ) s
+293 517 M
+(/*********************************************) s
+293 506 M
+(***********************************) s
+293 495 M
+( * DATA SECTION) s
+293 484 M
+( */) s
+293 473 M
+(.data) s
+293 451 M
+(/* to count how much time has passed*/) s
+293 440 M
+(.global TIME) s
+293 429 M
+(TIME:) s
+293 418 M
+(        .word 0) s
+293 396 M
+(.global KEY_PRESSED) s
+293 374 M
+(    KEY_PRESSED: ) s
+293 363 M
+(    .word 0) s
+293 341 M
+(    SPEED:) s
+293 330 M
+(    .word 0) s
+293 308 M
+(.end) s
+_R
+S
+%%Page: (1) 3
+%%BeginPageSetup
+_S
+18 36 translate
+/pagenum 1 def
+/fname (pushbutton.s) def
+/fdir (.) def
+/ftail (pushbutton.s) def
+% User defined strings:
+/pagenumstr (1) def
+/moddatestr (05/02/12) def
+/modtimestr (18:49:04) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+column_lines
+do_header
+5 671 M
+(/* ) s
+5 660 M
+( *) s
+5 649 M
+( * author\(s\):   Michael Kohler - 11-108-289) s
+5 638 M
+( *              Lars Sch\303\274tz) s
+5 627 M
+( * modified:    2012-05-02) s
+5 616 M
+( *) s
+5 605 M
+( */) s
+5 583 M
+(.include "nios_macros.s") s
+5 572 M
+(.include "address_map.s") s
+5 561 M
+(.extern KEY_PRESSED) s
+5 550 M
+(.global PUSHBUTTON_ISR) s
+5 528 M
+(/*********************************************) s
+5 517 M
+(********************************) s
+5 506 M
+( * Pushbutton - Interrupt Service Routine     ) s
+5 495 M
+(                           ) s
+5 484 M
+( *                                            ) s
+5 473 M
+(                              ) s
+5 462 M
+( *********************************************) s
+5 451 M
+(*********************************/) s
+5 429 M
+(PUSHBUTTON_ISR: /* speichere die Register auf ) s
+5 418 M
+(dem Stack */) s
+5 407 M
+(    subi sp, sp, 12) s
+5 396 M
+(    stw r10, 0\(sp\)) s
+5 385 M
+(    stw r11, 4\(sp\)) s
+5 374 M
+(    stw r12, 8\(sp\)) s
+5 352 M
+(/* Task \(d\) managed speed of wandering light *) s
+5 341 M
+(/) s
+5 319 M
+(    # Unterbrechungen) s
+5 308 M
+(    movia r10, PUSHBUTTON_BASE) s
+5 297 M
+(    ldwio r11, 0xC\(r10\)) s
+5 286 M
+(    stwio zero, 0xC\(r10\)) s
+5 264 M
+(# zeige key_pressed welcher Key gedr\303\274ckt wurd) s
+5 253 M
+(e) s
+5 242 M
+(CHECK_KEY1:) s
+5 231 M
+(    andi r12, r11, 0b0010) s
+5 220 M
+(    beq r12, zero, CHECK_KEY2) s
+5 209 M
+(    movi r12, KEY1) s
+5 198 M
+(    movia r10, KEY_PRESSED) s
+5 187 M
+(    stw r12, 0\(r10\)) s
+5 176 M
+(    br END_PUSHBUTTON_ISR) s
+5 154 M
+(CHECK_KEY2:) s
+5 143 M
+(    andi r12, r11, 0b0100) s
+5 132 M
+(    beq r12, zero, CHECK_KEY3) s
+5 121 M
+(    movi r12, KEY2) s
+5 110 M
+(    movia r10, KEY_PRESSED) s
+5 99 M
+(    stw r12, 0\(r10\)) s
+5 88 M
+(    br END_PUSHBUTTON_ISR) s
+5 66 M
+(CHECK_KEY3:) s
+5 55 M
+(    andi r12, r11, 0b1000) s
+5 44 M
+(    beq r12, zero, END_PUSHBUTTON_ISR) s
+5 33 M
+(    movi r12, KEY3) s
+5 22 M
+(    movia r10, KEY_PRESSED) s
+5 11 M
+(    stw r12, 0\(r10\)) s
+293 660 M
+(#speichere zur\303\274ck ins Register) s
+293 649 M
+(END_PUSHBUTTON_ISR:) s
+293 638 M
+(    ldw r10, 0\(sp\)) s
+293 627 M
+(    ldw r11, 4\(sp\)) s
+293 616 M
+(    ldw r12, 8\(sp\)) s
+293 605 M
+(    addi sp, sp, 12) s
+293 594 M
+(    ret) s
+293 572 M
+(.end) s
+_R
+S
+%%Trailer
+%%Pages: 3
+%%DocumentNeededResources: font Times-Roman Courier-Bold Courier 
+%%+ font Times-Bold 
+%%EOF
